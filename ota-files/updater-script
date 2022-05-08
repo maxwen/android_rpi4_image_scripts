@@ -1,0 +1,37 @@
+assert(getprop("ro.product.device") == "rpi4" || getprop("ro.build.product") == "rpi4" || abort("E3004: This package is for device: rpi4; this device is " + getprop("ro.product.device") + "."););
+ui_print("Target: Raspberry/omni_rpi4/rpi4:12/SP2A.220305.013.A3/eng.maxl.20220416.000755:userdebug/release-keys");
+
+ifelse(is_mounted("/boot"), unmount("/boot"));
+run_program("/system/bin/toybox", "mount", "/boot");
+
+package_extract_file("scripts/restore.sh", "/tmp/restore.sh");
+set_metadata("/tmp/restore.sh", "uid", 0, "gid", 0, "mode", 0755);
+
+package_extract_file("scripts/backup.sh", "/tmp/backup.sh");
+set_metadata("/tmp/backup.sh", "uid", 0, "gid", 0, "mode", 0755);
+
+run_program("/tmp/backup.sh");
+
+unmount("/boot");
+
+ui_print("Patching system image unconditionally...");
+show_progress(0.800000, 0);
+block_image_update("/dev/block/by-name/system", package_extract_file("system.transfer.list"), "system.new.dat.br", "system.patch.dat") ||
+  abort("E1001: Failed to update system image.");
+ui_print("Patching vendor image unconditionally...");
+show_progress(0.100000, 0);
+block_image_update("/dev/block/by-name/vendor", package_extract_file("vendor.transfer.list"), "vendor.new.dat.br", "vendor.patch.dat") ||
+  abort("E2001: Failed to update vendor image.");
+show_progress(0.100000, 10);
+ui_print("Patching boot image unconditionally...");
+package_extract_file("boot.img", "/dev/block/by-name/boot");
+show_progress(0.100000, 10);
+
+ifelse(is_mounted("/boot"), unmount("/boot"));
+run_program("/system/bin/toybox", "mount", "/boot");
+
+run_program("/tmp/restore.sh");
+
+unmount("/boot");
+
+set_progress(1.000000);
