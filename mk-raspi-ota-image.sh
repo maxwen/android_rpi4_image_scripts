@@ -8,7 +8,7 @@ CDIR=`pwd`
 IN_OTA_IMAGE=$OUT_DIR/target/product/rpi4/omni_rpi4-ota-eng.maxl.zip
 OUT_OTA_IMAGE=$HOME/raspberrypi/`basename $IN_OTA_IMAGE`
 IN_BOOT_IMAGE=$HOME/raspberrypi/boot.img
-IN_OTA_FILES=$HOME/raspberrypi/ota-files
+IN_OTA_FILES=$HOME/raspberrypi/scripts/ota-files
 
 if  [ ! -f "$IN_BOOT_IMAGE" ]; then
     echo "not boot.img"

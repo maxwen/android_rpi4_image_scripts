@@ -118,6 +118,7 @@ sudo cp /mnt/tmp/cutiepi/config.txt.rom.cutiepi /mnt/tmp/config.txt.rom
 sudo cp /mnt/tmp/cutiepi/cmdline_cutiepi.txt /mnt/tmp/cmdline.txt
 sudo cp /mnt/tmp/cutiepi/ramdisk-recovery-portrait.img /mnt/tmp/ramdisk-recovery-portrait.img
 sudo touch /mnt/tmp/is_recovery_image
+sudo touch /mnt/tmp/is_cutiepi_image
 
 # boot recovery by default
 sudo cp /mnt/tmp/config.txt.twrp /mnt/tmp/config.txt

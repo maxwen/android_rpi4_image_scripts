@@ -5,6 +5,10 @@ echo "run backup"
 if [ -f "/boot/is_recovery_image" ]; then
   echo "initial flash"
   cp /boot/is_recovery_image /tmp/
+  
+  if [ -f "/boot/is_cutiepi_image" ]; then
+    cp /boot/is_cutiepi_image /tmp/
+  fi
 else
   echo "update flash"
   if [ -f "/boot/config.txt" ]; then

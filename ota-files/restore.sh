@@ -18,6 +18,15 @@ if [ -f "/tmp/is_recovery_image" ]; then
 
   echo "initial flash - nothing to restore"
 
+  if [ -f "/tmp/is_cutiepi_image" ]; then
+    echo "initial flash - setup cutiepi image"
+
+    cp /boot/cutiepi/config.txt.twrp.cutiepi /boot/config.txt.twrp 
+    cp /boot/cutiepi/config.txt.rom.cutiepi /boot/config.txt.rom 
+    cp /boot/cutiepi/cmdline_cutiepi.txt /boot/cmdline.txt
+    cp /boot/cutiepi/ramdisk-recovery-portrait.img /boot/ramdisk-recovery-portrait.img
+  fi
+
   if [ $(readlink /dev/block/by-name/boot) == "/dev/block/sda1" ]; then
       echo "set USB boot"
       disable_property dtoverlay=rpi-android-sdcard /boot/config.txt.rom
