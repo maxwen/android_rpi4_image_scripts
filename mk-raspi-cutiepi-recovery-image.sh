@@ -85,8 +85,8 @@ dd if=/dev/zero of="$OUT_IMAGE_FILE" bs=1M count=4096
 echo "create partitions"
 sudo sfdisk "$OUT_IMAGE_FILE"  << EOF
 ,+128M,0xC,*
-,+2G,0x83,-
-,+256M,0x83,-
+,+2560M,0x83,-
+,+512M,0x83,-
 ,,0x83,-
 EOF
 

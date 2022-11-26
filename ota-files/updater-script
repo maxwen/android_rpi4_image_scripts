@@ -1,5 +1,4 @@
 assert(getprop("ro.product.device") == "rpi4" || getprop("ro.build.product") == "rpi4" || abort("E3004: This package is for device: rpi4; this device is " + getprop("ro.product.device") + "."););
-ui_print("Target: Raspberry/omni_rpi4/rpi4:12/SP2A.220305.013.A3/eng.maxl.20220416.000755:userdebug/release-keys");
 
 ifelse(is_mounted("/boot"), unmount("/boot"));
 run_program("/system/bin/toybox", "mount", "/boot");
