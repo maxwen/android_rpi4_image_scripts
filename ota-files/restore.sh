@@ -24,7 +24,6 @@ if [ -f "/tmp/is_recovery_image" ]; then
     cp /boot/cutiepi/config.txt.twrp.cutiepi /boot/config.txt.twrp 
     cp /boot/cutiepi/config.txt.rom.cutiepi /boot/config.txt.rom 
     cp /boot/cutiepi/cmdline_cutiepi.txt /boot/cmdline.txt
-    cp /boot/cutiepi/ramdisk-recovery-portrait.img /boot/ramdisk-recovery-portrait.img
   fi
 
   if [ $(readlink /dev/block/by-name/boot) == "/dev/block/sda1" ]; then

@@ -121,7 +121,6 @@ if [ $UPDATE_BOOT_PARTITION -eq 1 ]; then
     sudo cp /mnt/tmp/cutiepi/config.txt.rom.cutiepi /mnt/tmp/config.txt.rom 
     sudo cp /mnt/tmp/config.txt.rom /mnt/tmp/config.txt
     sudo cp /mnt/tmp/cutiepi/cmdline_cutiepi.txt /mnt/tmp/cmdline.txt
-    sudo cp /mnt/tmp/cutiepi/ramdisk-recovery-portrait.img /mnt/tmp/ramdisk-recovery-portrait.img
     sync
 fi
 

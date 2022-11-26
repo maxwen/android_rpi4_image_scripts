@@ -6,7 +6,12 @@ fi
 
 IN_IMAGE_DIR=$OUT_DIR/target/product/rpi4/
 IN_BOOT_FILES=$ANDROID_BUILD_TOP/vendor/brcm/rpi4/proprietary/boot/
-OUT_IMAGE_FILE=$HOME/raspberrypi/omni-rpi4-cutiepi-recovery.img
+OUT_IMAGE_FILE=$HOME/raspberrypi/omni-$ROM_BUILDTYPE-cutiepi.img
+
+if [ -z $ROM_BUILDTYPE ]; then
+    echo "missing ROM_BUILDTYPE"
+    exit 0
+fi
 
 options=$(getopt -o ho:i:b: -- "$@")
 [ $? -eq 0 ] || { 
@@ -58,6 +63,16 @@ if [ -z $IN_BOOT_FILES ]; then
     exit 0
 fi
 
+if  [ ! -f "$IN_IMAGE_DIR/system.img" ]; then
+    echo "no <input folder>/system.img"
+    exit 0
+fi
+
+if  [ ! -f "$IN_IMAGE_DIR/vendor.img" ]; then
+    echo "no <input folder>/vendor.img"
+    exit 0
+fi
+
 if  [ ! -f "$IN_IMAGE_DIR/obj/KERNEL_OBJ/arch/arm64/boot/Image" ]; then
     echo "no <input folder>/obj/KERNEL_OBJ/arch/arm64/boot/Image"
     exit 0
@@ -80,7 +95,7 @@ if [ -f $OUT_IMAGE_FILE ]; then
 fi
 
 echo "create empty image"
-dd if=/dev/zero of="$OUT_IMAGE_FILE" bs=1M count=4096
+dd if=/dev/zero of="$OUT_IMAGE_FILE" bs=1M count=8192
 
 echo "create partitions"
 sudo sfdisk "$OUT_IMAGE_FILE"  << EOF
@@ -101,7 +116,12 @@ sudo mkfs.ext4 /dev/mapper/loop0p4 -L userdata
 echo "enable project quota"
 sudo tune2fs -O project,quota /dev/mapper/loop0p4
 
-echo "write boot partition"
+echo "write system.img"
+sudo dd if="$IN_IMAGE_DIR/system.img" of=/dev/mapper/loop0p2 bs=1M
+echo "write vendor.img"
+sudo dd if="$IN_IMAGE_DIR/vendor.img" of=/dev/mapper/loop0p3 bs=1M
+
+echo "write boot patition"
 sudo mkdir /mnt/tmp
 sudo mount /dev/mapper/loop0p1 /mnt/tmp
 sudo cp "$IN_IMAGE_DIR/ramdisk.img" /mnt/tmp/
@@ -115,21 +135,12 @@ sudo cp $IN_IMAGE_DIR/obj/KERNEL_OBJ/arch/arm64/boot/dts/overlays/* /mnt/tmp/ove
 sudo cp -r $IN_BOOT_FILES/* /mnt/tmp/
 sudo cp /mnt/tmp/cutiepi/config.txt.twrp.cutiepi /mnt/tmp/config.txt.twrp 
 sudo cp /mnt/tmp/cutiepi/config.txt.rom.cutiepi /mnt/tmp/config.txt.rom 
+sudo cp /mnt/tmp/config.txt.rom /mnt/tmp/config.txt
 sudo cp /mnt/tmp/cutiepi/cmdline_cutiepi.txt /mnt/tmp/cmdline.txt
-sudo touch /mnt/tmp/is_recovery_image
-sudo touch /mnt/tmp/is_cutiepi_image
-
-# boot recovery by default
-sudo cp /mnt/tmp/config.txt.twrp /mnt/tmp/config.txt
 sync
-sudo umount /mnt/tmp
 
-echo "init data partition"
-sudo mount /dev/mapper/loop0p4 /mnt/tmp
-sudo mkdir /mnt/tmp/cache
-sync
+echo "unmounting"
 sudo umount /mnt/tmp
-
 sudo rm -fr /mnt/tmp
 
 sudo kpartx -dv "$OUT_IMAGE_FILE"

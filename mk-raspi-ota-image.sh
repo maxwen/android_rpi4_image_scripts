@@ -4,19 +4,24 @@ if [ -z $OUT_DIR ]; then
     OUT_DIR=`pwd`/out
 fi
 
+if [ -z $ROM_BUILDTYPE ]; then
+    echo "missing ROM_BUILDTYPE"
+    exit 0
+fi
+
 CDIR=`pwd`
 IN_OTA_IMAGE=$OUT_DIR/target/product/rpi4/omni_rpi4-ota-eng.maxl.zip
-OUT_OTA_IMAGE=$HOME/raspberrypi/`basename $IN_OTA_IMAGE`
+OUT_OTA_IMAGE=$HOME/raspberrypi/omni_rpi4-ota-eng.maxl.$ROM_BUILDTYPE.zip
 IN_BOOT_IMAGE=$HOME/raspberrypi/boot.img
 IN_OTA_FILES=$HOME/raspberrypi/scripts/ota-files
 
 if  [ ! -f "$IN_BOOT_IMAGE" ]; then
-    echo "not boot.img"
+    echo "no boot.img - run mk-raspi-boot-img.sh"
     exit 0
 fi
 
 if  [ ! -f "$IN_OTA_IMAGE" ]; then
-    echo "no ota image"
+    echo "no ota image - run m otapackage"
     exit 0
 fi
 
